@@ -1,0 +1,23 @@
+version: '3'
+services:
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - 41025:1025
+      - 41080:1080
+  db:
+    image: mysql:5.7
+    restart: always
+    env_file: containers/db/.env
+    volumes:
+      - dbdata:/var/lib/mysql
+  backend:
+    build: .
+    entrypoint: ./startup.sh
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+      - mailcatcher
+volumes:
+  dbdata:
